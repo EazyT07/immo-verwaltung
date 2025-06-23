@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function getAuthFlowType() {
   const hashParams = new URLSearchParams(
@@ -14,20 +12,22 @@ function getAuthFlowType() {
 function LoginForm() {
   const [session, setSession] = useState(undefined);
   const [isRecovery, setIsRecovery] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
-  const [resetMessage, setResetMessage] = useState("");
-  const [isSendingReset, setIsSendingReset] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) setErrorMsg(error.message);
+    if (error) {
+      setErrorMsg(error.message);
+    } else {
+      navigate("/dashboard/renters");
+    }
   };
 
   useEffect(() => {

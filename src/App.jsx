@@ -7,6 +7,9 @@ import {
 import LoginForm from "./pages/LoginForm";
 import ResetPasswordForm from "./pages/ResetPasswordForm";
 import SetPasswordForm from "./pages/SetPasswordForm";
+import DashboardLayout from "./layouts/DashboardLayout";
+import RenterDashboard from "./pages/RenterDashboard";
+import SettingDashboard from "./pages/SettingDashboard";
 
 function App() {
   return (
@@ -15,6 +18,10 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/reset-password" element={<ResetPasswordForm />} />
         <Route path="/set-password" element={<SetPasswordForm />} />
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="renters" element={<RenterDashboard />} />
+          <Route path="settings" element={<SettingDashboard />} />
+        </Route>
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
