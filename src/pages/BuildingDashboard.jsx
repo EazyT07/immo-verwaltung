@@ -142,16 +142,18 @@ function BuildingDashboard() {
                 <td>{b.square_meters}</td>
                 <td>
                   <button
-                    className="btn btn-sm btn-secondary me-2"
+                    className="btn btn-sm btn-outline-secondary me-2"
                     onClick={() => handleEdit(b)}
+                    title="Bearbeiten"
                   >
-                    Bearbeiten
+                    <i className="bi bi-pencil-square"></i>
                   </button>
                   <button
-                    className="btn btn-sm btn-danger"
+                    className="btn btn-sm btn-outline-danger"
                     onClick={() => setConfirmDeleteId(b.id)}
+                    title="Löschen"
                   >
-                    Löschen
+                    <i className="bi bi-trash3"></i>
                   </button>
                 </td>
               </tr>

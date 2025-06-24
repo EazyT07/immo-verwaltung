@@ -196,7 +196,7 @@ function RenterDashboard() {
       )}
 
       <div className="table-responsive">
-        <table className="table">
+        <table className="table table-striped">
           <thead>
             <tr>
               <th>Name</th>
@@ -204,23 +204,25 @@ function RenterDashboard() {
               <th>Aktionen</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="table-group-divider">
             {renters.map((renter) => (
               <tr key={renter.id}>
                 <td>{renter.name}</td>
                 <td>{renter.prename}</td>
                 <td>
                   <button
-                    className="btn btn-sm btn-secondary me-2"
+                    className="btn btn-sm btn-outline-secondary me-2"
                     onClick={() => handleEdit(renter)}
+                    title="Bearbeiten"
                   >
-                    Bearbeiten
+                    <i className="bi bi-pencil-square"></i>
                   </button>
                   <button
-                    className="btn btn-sm btn-danger"
+                    className="btn btn-sm btn-outline-danger"
                     onClick={() => handleDelete(renter.id)}
+                    title="Löschen"
                   >
-                    Löschen
+                    <i className="bi bi-trash3"></i>
                   </button>
                 </td>
               </tr>
