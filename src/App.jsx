@@ -9,6 +9,7 @@ import ResetPasswordForm from "./pages/ResetPasswordForm";
 import SetPasswordForm from "./pages/SetPasswordForm";
 import DashboardLayout from "./layouts/DashboardLayout";
 import RenterDashboard from "./pages/RenterDashboard";
+import BuildingDashboard from "./pages/BuildingDashboard";
 import SettingDashboard from "./pages/SettingDashboard";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/set-password" element={<SetPasswordForm />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="renters" element={<RenterDashboard />} />
+          <Route path="buildings" element={<BuildingDashboard />} />
           <Route path="settings" element={<SettingDashboard />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" />} />

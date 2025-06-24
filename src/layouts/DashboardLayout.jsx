@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
-const DashboardLayout = () => {
+function DashboardLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -39,6 +39,11 @@ const DashboardLayout = () => {
           <h4>Menu</h4>
           <ul className="nav flex-column">
             <li className="nav-item">
+              <Link className="nav-link" to="/dashboard/buildings">
+                Gebäude
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/dashboard/renters">
                 Mieter
               </Link>
@@ -56,6 +61,6 @@ const DashboardLayout = () => {
       </div>
     </div>
   );
-};
+}
 
 export default DashboardLayout;

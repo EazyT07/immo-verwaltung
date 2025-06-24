@@ -1,126 +1,164 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 
-function RenterDashboard() {
-  const [renters, setRenters] = useState([]);
-  const [formData, setFormData] = useState({ name: "", prename: "" });
+function BuildingDashboard() {
+  const [buildings, setBuildings] = useState([]);
+  const [formData, setFormData] = useState({
+    street: "",
+    house_nr: "",
+    postal_code: "",
+    city: "",
+    square_meters: "",
+  });
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
-  useEffect(() => {
-    const fetchRenters = async () => {
-      const { data, error } = await supabase
-        .from("renter")
-        .select("id, name, prename");
-      if (!error) {
-        setRenters(data);
-      } else {
-        console.error("Error fetching renters:", error.message);
-      }
-    };
+  const fields = [
+    { id: "street", text: "Strasse" },
+    { id: "house_nr", text: "Hausnummer" },
+    { id: "postal_code", text: "PLZ" },
+    { id: "city", text: "Stadt" },
+    { id: "square_meters", text: "Quadratmeter" },
+  ];
 
-    fetchRenters();
+  useEffect(() => {
+    fetchBuildings();
   }, []);
+
+  const fetchBuildings = async () => {
+    const { data, error } = await supabase.from("building").select("*");
+    if (!error) setBuildings(data);
+  };
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleAdd = async () => {
-    if (!formData.name || !formData.prename) return;
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
     const { data: userRow } = await supabase
       .from("user")
       .select("id")
       .eq("auth_user_id", user.id)
       .single();
 
-    const newRenter = {
-      name: formData.name,
-      prename: formData.prename,
+    const newBuilding = {
+      ...formData,
       user_id: userRow.id,
+      square_meters: parseFloat(formData.square_meters),
     };
 
     if (editingId) {
       const { data, error } = await supabase
-        .from("renter")
-        .update(newRenter)
+        .from("building")
+        .update(newBuilding)
         .eq("id", editingId)
         .select();
-
       if (!error) {
-        setRenters((prev) =>
-          prev.map((r) => (r.id === editingId ? data[0] : r))
+        setBuildings((prev) =>
+          prev.map((b) => (b.id === editingId ? data[0] : b))
         );
-        setEditingId(null);
-        setFormData({ name: "", prename: "" });
-        setShowModal(false);
-      } else {
-        console.error("Error updating renter:", error?.message);
       }
     } else {
       const { data, error } = await supabase
-        .from("renter")
-        .insert([newRenter])
+        .from("building")
+        .insert([newBuilding])
         .select();
-
-      if (!error && data.length > 0) {
-        setRenters((prev) => [...prev, data[0]]);
-        setFormData({ name: "", prename: "" });
-        setShowModal(false);
-      } else {
-        console.error("Error adding renter:", error?.message);
+      if (!error) {
+        setBuildings((prev) => [...prev, data[0]]);
       }
     }
+
+    setShowModal(false);
+    setEditingId(null);
+    setFormData({
+      street: "",
+      house_nr: "",
+      postal_code: "",
+      city: "",
+      square_meters: "",
+    });
   };
 
-  const handleEdit = (renter) => {
-    setFormData({ name: renter.name, prename: renter.prename });
-    setEditingId(renter.id);
+  const handleEdit = (building) => {
+    setFormData(building);
+    setEditingId(building.id);
     setShowModal(true);
-  };
-
-  const handleDelete = (id) => {
-    setConfirmDeleteId(id);
   };
 
   const confirmDelete = async () => {
     const { error } = await supabase
-      .from("renter")
+      .from("building")
       .delete()
       .eq("id", confirmDeleteId);
     if (!error) {
-      setRenters((prev) => prev.filter((r) => r.id !== confirmDeleteId));
-    } else {
-      console.error("Error deleting renter:", error?.message);
+      setBuildings((prev) => prev.filter((b) => b.id !== confirmDeleteId));
     }
     setConfirmDeleteId(null);
   };
 
-  const fields = [
-    { id: "name", text: "Name" },
-    { id: "prename", text: "Vorname" },
-  ];
-
   return (
-    <div className="container py-4">
-      <h2>Mieter</h2>
-
+    <div>
+      <h3>Gebäude</h3>
       <button
+        className="btn btn-primary mb-3"
         onClick={() => {
-          setFormData({ name: "", prename: "" });
+          setFormData({
+            street: "",
+            house_nr: "",
+            postal_code: "",
+            city: "",
+            square_meters: "",
+          });
           setEditingId(null);
           setShowModal(true);
         }}
-        className="btn btn-primary mb-4"
       >
-        + Neuer Mieter
+        + Neues Gebäude
       </button>
+
+      <div className="table-responsive">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Adresse</th>
+              <th>PLZ</th>
+              <th>Stadt</th>
+              <th>qm</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {buildings.map((b) => (
+              <tr key={b.id}>
+                <td>
+                  {b.street} {b.house_nr}
+                </td>
+                <td>{b.postal_code}</td>
+                <td>{b.city}</td>
+                <td>{b.square_meters}</td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-secondary me-2"
+                    onClick={() => handleEdit(b)}
+                  >
+                    Bearbeiten
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => setConfirmDeleteId(b.id)}
+                  >
+                    Löschen
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {showModal && (
         <div className="modal show d-block" tabIndex="-1">
@@ -128,24 +166,22 @@ function RenterDashboard() {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">
-                  {editingId ? "Mieter bearbeiten" : "Neuer Mieter"}
+                  {editingId ? "Gebäude bearbeiten" : "Neues Gebäude"}
                 </h5>
                 <button
-                  type="button"
                   className="btn-close"
                   onClick={() => setShowModal(false)}
                 ></button>
               </div>
               <div className="modal-body">
                 {fields.map((field) => (
-                  <div className="mb-3" key={field.id}>
+                  <div className="mb-2" key={field.id}>
                     <label className="form-label">{field.text}</label>
                     <input
-                      type="text"
                       name={field.id}
+                      className="form-control"
                       value={formData[field.id]}
                       onChange={handleChange}
-                      className="form-control"
                     />
                   </div>
                 ))}
@@ -174,7 +210,7 @@ function RenterDashboard() {
                 <h5 className="modal-title">Löschen bestätigen</h5>
               </div>
               <div className="modal-body">
-                <p>Möchten Sie diesen Mieter wirklich löschen?</p>
+                <p>Möchten Sie dieses Gebäude wirklich löschen?</p>
               </div>
               <div className="modal-footer d-flex flex-column gap-2">
                 <button
@@ -194,42 +230,8 @@ function RenterDashboard() {
           </div>
         </div>
       )}
-
-      <div className="table-responsive">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Vorname</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-            {renters.map((renter) => (
-              <tr key={renter.id}>
-                <td>{renter.name}</td>
-                <td>{renter.prename}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-secondary me-2"
-                    onClick={() => handleEdit(renter)}
-                  >
-                    Bearbeiten
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleDelete(renter.id)}
-                  >
-                    Löschen
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }
 
-export default RenterDashboard;
+export default BuildingDashboard;
