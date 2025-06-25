@@ -4,6 +4,7 @@ import { supabase } from "../supabaseClient";
 function BuildingDashboard() {
   const [buildings, setBuildings] = useState([]);
   const [formData, setFormData] = useState({
+    ext_id: "",
     street: "",
     house_nr: "",
     postal_code: "",
@@ -15,11 +16,12 @@ function BuildingDashboard() {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const fields = [
+    { id: "ext_id", text: "ID" },
     { id: "street", text: "Strasse" },
     { id: "house_nr", text: "Hausnummer" },
     { id: "postal_code", text: "PLZ" },
     { id: "city", text: "Stadt" },
-    { id: "square_meters", text: "Quadratmeter" },
+    { id: "square_meters", text: "Größe (m²)" },
   ];
 
   useEffect(() => {
@@ -75,6 +77,7 @@ function BuildingDashboard() {
     setShowModal(false);
     setEditingId(null);
     setFormData({
+      ext_id: "",
       street: "",
       house_nr: "",
       postal_code: "",
@@ -121,19 +124,21 @@ function BuildingDashboard() {
       </button>
 
       <div className="table-responsive">
-        <table className="table">
+        <table className="table table-striped">
           <thead>
             <tr>
+              <th>ID</th>
               <th>Adresse</th>
               <th>PLZ</th>
               <th>Stadt</th>
-              <th>qm</th>
+              <th>Größe (m²)</th>
               <th>Aktionen</th>
             </tr>
           </thead>
           <tbody>
             {buildings.map((b) => (
               <tr key={b.id}>
+                <td>{b.ext_id}</td>
                 <td>
                   {b.street} {b.house_nr}
                 </td>

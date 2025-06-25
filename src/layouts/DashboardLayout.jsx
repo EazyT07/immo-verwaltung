@@ -44,6 +44,11 @@ function DashboardLayout() {
               </Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/dashboard/housing-units">
+                Wohnungseinheit
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/dashboard/renters">
                 Mieter
               </Link>

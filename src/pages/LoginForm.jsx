@@ -40,6 +40,7 @@ function LoginForm() {
     }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Session on load:", session);
       setSession(session);
     });
 
@@ -111,12 +112,7 @@ function LoginForm() {
     );
   }
 
-  return (
-    <div>
-      <h2>Welcome, {session.user.email}</h2>
-      <button onClick={() => supabase.auth.signOut()}>Sign out</button>
-    </div>
-  );
+  return <Navigate to="/dashboard/buildings" />;
 }
 
 export default LoginForm;
