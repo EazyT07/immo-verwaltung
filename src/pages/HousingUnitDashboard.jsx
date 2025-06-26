@@ -4,6 +4,7 @@ import { supabase } from "../supabaseClient";
 function HousingUnitDashboard() {
   const [housingUnits, setHousingUnits] = useState([]);
   const [buildings, setBuildings] = useState([]);
+  const [userId, setUserId] = useState(null);
   const [formData, setFormData] = useState({
     ext_id: "",
     square_meters: "",
@@ -14,13 +15,6 @@ function HousingUnitDashboard() {
   });
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [userId, setUserId] = useState(null);
-
-  const fields = [
-    { id: "ext_id", text: "ID" },
-    { id: "square_meters", text: "Größe (m²)" },
-    { id: "building_id", text: "Gebäude ID" },
-  ];
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -57,7 +51,6 @@ function HousingUnitDashboard() {
       .select("id, ext_id");
     if (!error) {
       setBuildings(data);
-      console.log("Buildings:", data);
     }
   }
 
@@ -67,7 +60,6 @@ function HousingUnitDashboard() {
   };
 
   const openModal = (unit = null) => {
-    console.log("Modal Unit:", unit);
     if (unit) {
       setFormData({
         id: unit.id,
@@ -91,8 +83,6 @@ function HousingUnitDashboard() {
     // Exclude nested `building` from payload
     const { building, ...cleanFormData } = formData;
     const payload = { ...cleanFormData, user_id: userId };
-    console.log("Form Data:", formData);
-    console.log("Payload:", payload);
 
     if (editingId) {
       await supabase.from("housing_unit").update(payload).eq("id", editingId);

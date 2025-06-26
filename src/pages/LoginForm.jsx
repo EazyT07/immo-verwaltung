@@ -2,16 +2,8 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { Navigate, useNavigate } from "react-router-dom";
 
-function getAuthFlowType() {
-  const hashParams = new URLSearchParams(
-    window.location.hash.replace("#", "?")
-  );
-  return hashParams.get("type");
-}
-
 function LoginForm() {
   const [session, setSession] = useState(undefined);
-  const [isRecovery, setIsRecovery] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -31,16 +23,7 @@ function LoginForm() {
   };
 
   useEffect(() => {
-    const type = getAuthFlowType();
-
-    if (type === "recovery" || type === "invite") {
-      setIsRecovery(true);
-    } else if (type === "signup") {
-      console.log("Type: ", type);
-    }
-
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Session on load:", session);
       setSession(session);
     });
 
@@ -57,10 +40,6 @@ function LoginForm() {
 
   if (session === undefined) {
     return <div style={{ padding: "2rem" }}>Loading...</div>;
-  }
-
-  if (isRecovery) {
-    return <Navigate to="/set-password" />;
   }
 
   if (!session) {

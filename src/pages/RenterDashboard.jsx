@@ -3,85 +3,90 @@ import { supabase } from "../supabaseClient";
 
 function RenterDashboard() {
   const [renters, setRenters] = useState([]);
-  const [formData, setFormData] = useState({ name: "", prename: "" });
+  const [housing_units, setHousingUnits] = useState([]);
+  const [formData, setFormData] = useState({
+    name: "",
+    prename: "",
+    housing_unit_id: "",
+    houssing_unit: {
+      ext_id: "",
+    },
+  });
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   useEffect(() => {
-    const fetchRenters = async () => {
-      const { data, error } = await supabase
-        .from("renter")
-        .select("id, name, prename");
-      if (!error) {
-        setRenters(data);
-      } else {
-        console.error("Error fetching renters:", error.message);
-      }
-    };
-
     fetchRenters();
+    fetchHousingUnits();
   }, []);
+
+  const fetchRenters = async () => {
+    const { data, error } = await supabase
+      .from("renter")
+      .select(
+        "id, name, prename, housing_unit_id, housing_unit:housing_unit_id(ext_id)"
+      );
+    if (!error) {
+      setRenters(data);
+    } else {
+      console.error("Error fetching renters:", error.message);
+    }
+  };
+
+  const fetchHousingUnits = async () => {
+    const { data, error } = await supabase
+      .from("housing_unit")
+      .select("id, ext_id");
+    if (!error) {
+      setHousingUnits(data);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleAdd = async () => {
-    if (!formData.name || !formData.prename) return;
-
+  const handleSubmit = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
     const { data: userRow } = await supabase
       .from("user")
       .select("id")
       .eq("auth_user_id", user.id)
       .single();
 
-    const newRenter = {
-      name: formData.name,
-      prename: formData.prename,
-      user_id: userRow.id,
-    };
-
+    const { housing_unit, ...cleanFormData } = formData;
+    const payload = { ...cleanFormData, user_id: userRow.id };
     if (editingId) {
-      const { data, error } = await supabase
-        .from("renter")
-        .update(newRenter)
-        .eq("id", editingId)
-        .select();
-
-      if (!error) {
-        setRenters((prev) =>
-          prev.map((r) => (r.id === editingId ? data[0] : r))
-        );
-        setEditingId(null);
-        setFormData({ name: "", prename: "" });
-        setShowModal(false);
-      } else {
-        console.error("Error updating renter:", error?.message);
-      }
+      await supabase.from("renter").update(payload).eq("id", editingId);
     } else {
-      const { data, error } = await supabase
-        .from("renter")
-        .insert([newRenter])
-        .select();
-
-      if (!error && data.length > 0) {
-        setRenters((prev) => [...prev, data[0]]);
-        setFormData({ name: "", prename: "" });
-        setShowModal(false);
-      } else {
-        console.error("Error adding renter:", error?.message);
-      }
+      await supabase.from("renter").insert(payload);
     }
+
+    setShowModal(false);
+    fetchRenters();
   };
 
-  const handleEdit = (renter) => {
-    setFormData({ name: renter.name, prename: renter.prename });
-    setEditingId(renter.id);
+  const openModal = (renter) => {
+    if (renter) {
+      setFormData({
+        id: renter.id,
+        name: renter.name,
+        prename: renter.prename,
+        housing_unit_id: renter.housing_unit_id,
+      });
+      setEditingId(renter.id);
+    } else {
+      setFormData({
+        id: "",
+        name: "",
+        prename: "",
+        housing_unit_id: "",
+      });
+      setEditingId(null);
+    }
     setShowModal(true);
   };
 
@@ -101,11 +106,6 @@ function RenterDashboard() {
     }
     setConfirmDeleteId(null);
   };
-
-  const fields = [
-    { id: "name", text: "Name" },
-    { id: "prename", text: "Vorname" },
-  ];
 
   return (
     <div className="container py-4">
@@ -137,28 +137,44 @@ function RenterDashboard() {
                 ></button>
               </div>
               <div className="modal-body">
-                {fields.map((field) => (
-                  <div className="mb-3" key={field.id}>
-                    <label className="form-label">{field.text}</label>
-                    <input
-                      type="text"
-                      name={field.id}
-                      value={formData[field.id]}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                  </div>
-                ))}
+                <label className="form-label">Name</label>
+                <input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="form-control mb-2"
+                />
+                <label className="form-label">Vorname</label>
+                <input
+                  name="prename"
+                  value={formData.prename}
+                  onChange={handleChange}
+                  className="form-control mb-2"
+                />
+                <label className="form-label">Wohnung</label>
+                <select
+                  name="housing_unit_id"
+                  value={formData.housing_unit_id}
+                  onChange={handleChange}
+                  className="form-select mb-2"
+                >
+                  <option value="">-- bitte wählen --</option>
+                  {housing_units.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.ext_id || b.id}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="modal-footer d-flex flex-column gap-2">
+              <div className="modal-footer">
                 <button
-                  className="btn btn-secondary w-100"
+                  className="btn btn-secondary"
                   onClick={() => setShowModal(false)}
                 >
                   Abbrechen
                 </button>
-                <button className="btn btn-primary w-100" onClick={handleAdd}>
-                  {editingId ? "Aktualisieren" : "Hinzufügen"}
+                <button className="btn btn-primary" onClick={handleSubmit}>
+                  Speichern
                 </button>
               </div>
             </div>
@@ -201,6 +217,7 @@ function RenterDashboard() {
             <tr>
               <th>Name</th>
               <th>Vorname</th>
+              <th>Gebäude ID</th>
               <th>Aktionen</th>
             </tr>
           </thead>
@@ -209,10 +226,11 @@ function RenterDashboard() {
               <tr key={renter.id}>
                 <td>{renter.name}</td>
                 <td>{renter.prename}</td>
+                <td>{renter.housing_unit.ext_id}</td>
                 <td>
                   <button
                     className="btn btn-sm btn-outline-secondary me-2"
-                    onClick={() => handleEdit(renter)}
+                    onClick={() => openModal(renter)}
                     title="Bearbeiten"
                   >
                     <i className="bi bi-pencil-square"></i>
