@@ -114,7 +114,7 @@ function HousingUnitDashboard() {
             <th></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="table-group-divider">
           {housingUnits.map((unit) => (
             <tr key={unit.id}>
               <td>{unit.ext_id}</td>

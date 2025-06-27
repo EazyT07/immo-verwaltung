@@ -217,7 +217,7 @@ function RenterDashboard() {
             <tr>
               <th>Name</th>
               <th>Vorname</th>
-              <th>Gebäude ID</th>
+              <th>Wohnung ID</th>
               <th>Aktionen</th>
             </tr>
           </thead>

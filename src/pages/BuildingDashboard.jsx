@@ -135,7 +135,7 @@ function BuildingDashboard() {
               <th>Aktionen</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="table-group-divider">
             {buildings.map((b) => (
               <tr key={b.id}>
                 <td>{b.ext_id}</td>

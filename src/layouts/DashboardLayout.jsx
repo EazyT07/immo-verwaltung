@@ -54,6 +54,11 @@ function DashboardLayout() {
               </Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/dashboard/overview">
+                Übersicht
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/dashboard/settings">
                 Settings
               </Link>
