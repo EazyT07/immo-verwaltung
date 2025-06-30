@@ -43,24 +43,20 @@ function OverviewDashboard() {
               </tr>
             </thead>
             <tbody>
-              {building.housing_unit.map((unit) =>
-                unit.renter.length > 0 ? (
-                  unit.renter.map((r, index) => (
-                    <tr key={`${unit.ext_id}-${index}`}>
-                      <td>{index === 0 ? unit.ext_id : ""}</td>
-                      <td>{index === 0 ? unit.square_meters : ""}</td>
-                      <td>{r.prename}</td>
-                      <td>{r.name}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr key={unit.ext_id}>
-                    <td>{unit.ext_id}</td>
-                    <td>{unit.square_meters}</td>
+              {building.housing_unit?.map((unit) => (
+                <tr key={unit.ext_id}>
+                  <td>{unit.ext_id}</td>
+                  <td>{unit.square_meters}</td>
+                  {unit.renter ? (
+                    <>
+                      <td>{unit.renter.prename}</td>
+                      <td>{unit.renter.name}</td>
+                    </>
+                  ) : (
                     <td colSpan="2">—</td>
-                  </tr>
-                )
-              )}
+                  )}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

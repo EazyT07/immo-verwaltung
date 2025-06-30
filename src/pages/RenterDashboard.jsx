@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import MasterDataTable from "../components/MasterDataTable";
 
 function RenterDashboard() {
   const [renters, setRenters] = useState([]);
@@ -8,13 +9,26 @@ function RenterDashboard() {
     name: "",
     prename: "",
     housing_unit_id: "",
-    houssing_unit: {
-      ext_id: "",
-    },
   });
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
+  const columns = [
+    {
+      key: "name",
+      label: "Name",
+    },
+    {
+      key: "prename",
+      label: "Vorname",
+    },
+    {
+      key: "housing_unit_id",
+      label: "Wohnung ID",
+      render: (_value, row) => row.housing_unit?.ext_id || "-",
+    },
+  ];
 
   useEffect(() => {
     fetchRenters();
@@ -40,6 +54,8 @@ function RenterDashboard() {
       .select("id, ext_id");
     if (!error) {
       setHousingUnits(data);
+    } else {
+      console.error("Error fetching housing units:", error.message);
     }
   };
 
@@ -51,18 +67,30 @@ function RenterDashboard() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const { data: userRow } = await supabase
+    const { data: userRow, error: userError } = await supabase
       .from("user")
       .select("id")
       .eq("auth_user_id", user.id)
       .single();
 
-    const { housing_unit, ...cleanFormData } = formData;
-    const payload = { ...cleanFormData, user_id: userRow.id };
+    if (userError || !userRow) {
+      console.error("Error fetching user row:", userError?.message);
+      return;
+    }
+
+    const payload = { ...formData, user_id: userRow.id };
+    let error;
     if (editingId) {
-      await supabase.from("renter").update(payload).eq("id", editingId);
+      ({ error } = await supabase
+        .from("renter")
+        .update(payload)
+        .eq("id", editingId));
     } else {
-      await supabase.from("renter").insert(payload);
+      ({ error } = await supabase.from("renter").insert(payload));
+    }
+
+    if (error) {
+      console.error("Error saving renter:", error.message);
     }
 
     setShowModal(false);
@@ -72,7 +100,6 @@ function RenterDashboard() {
   const openModal = (renter) => {
     if (renter) {
       setFormData({
-        id: renter.id,
         name: renter.name,
         prename: renter.prename,
         housing_unit_id: renter.housing_unit_id,
@@ -80,7 +107,6 @@ function RenterDashboard() {
       setEditingId(renter.id);
     } else {
       setFormData({
-        id: "",
         name: "",
         prename: "",
         housing_unit_id: "",
@@ -211,43 +237,12 @@ function RenterDashboard() {
         </div>
       )}
 
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Vorname</th>
-              <th>Wohnung ID</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody className="table-group-divider">
-            {renters.map((renter) => (
-              <tr key={renter.id}>
-                <td>{renter.name}</td>
-                <td>{renter.prename}</td>
-                <td>{renter.housing_unit.ext_id}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-outline-secondary me-2"
-                    onClick={() => openModal(renter)}
-                    title="Bearbeiten"
-                  >
-                    <i className="bi bi-pencil-square"></i>
-                  </button>
-                  <button
-                    className="btn btn-sm btn-outline-danger"
-                    onClick={() => handleDelete(renter.id)}
-                    title="Löschen"
-                  >
-                    <i className="bi bi-trash3"></i>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <MasterDataTable
+        columns={columns}
+        data={renters}
+        onEdit={openModal}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }
