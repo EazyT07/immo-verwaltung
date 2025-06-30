@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import MasterDataTable from "../components/MasterDataTable";
 
 function BuildingDashboard() {
   const [buildings, setBuildings] = useState([]);
@@ -15,7 +16,7 @@ function BuildingDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
-  const fields = [
+  const fieldsModal = [
     { id: "ext_id", text: "ID" },
     { id: "street", text: "Strasse" },
     { id: "house_nr", text: "Hausnummer" },
@@ -24,12 +25,42 @@ function BuildingDashboard() {
     { id: "square_meters", text: "Größe (m²)" },
   ];
 
+  const columns = [
+    {
+      key: "ext_id",
+      label: "ID",
+    },
+    {
+      key: "street",
+      label: "Strasse",
+    },
+    {
+      key: "house_nr",
+      label: "Hausnummer",
+    },
+    {
+      key: "postal_code",
+      label: "PLZ",
+    },
+    {
+      key: "city",
+      label: "Stadt",
+    },
+    {
+      key: "square_meters",
+      label: "Größe (m²)",
+    },
+  ];
+
   useEffect(() => {
     fetchBuildings();
   }, []);
 
   const fetchBuildings = async () => {
-    const { data, error } = await supabase.from("building").select("*");
+    const { data, error } = await supabase
+      .from("building")
+      .select("*")
+      .order("ext_id", { ascending: true });
     if (!error) setBuildings(data);
   };
 
@@ -37,7 +68,7 @@ function BuildingDashboard() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleAdd = async () => {
+  const handleSubmit = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -75,21 +106,36 @@ function BuildingDashboard() {
     }
 
     setShowModal(false);
-    setEditingId(null);
-    setFormData({
-      ext_id: "",
-      street: "",
-      house_nr: "",
-      postal_code: "",
-      city: "",
-      square_meters: "",
-    });
+    fetchBuildings();
   };
 
-  const handleEdit = (building) => {
-    setFormData(building);
-    setEditingId(building.id);
+  const openModal = (building) => {
+    if (building) {
+      setFormData({
+        ext_id: building.ext_id,
+        street: building.street,
+        house_nr: building.house_nr,
+        postal_code: building.postal_code,
+        city: building.city,
+        square_meters: building.square_meters,
+      });
+      setEditingId(building.id);
+    } else {
+      setFormData({
+        ext_id: "",
+        street: "",
+        house_nr: "",
+        postal_code: "",
+        city: "",
+        square_meters: "",
+      });
+      setEditingId(null);
+    }
     setShowModal(true);
+  };
+
+  const handleDelete = (id) => {
+    setConfirmDeleteId(id);
   };
 
   const confirmDelete = async () => {
@@ -123,50 +169,6 @@ function BuildingDashboard() {
         + Neues Gebäude
       </button>
 
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Adresse</th>
-              <th>PLZ</th>
-              <th>Stadt</th>
-              <th>Größe (m²)</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody className="table-group-divider">
-            {buildings.map((b) => (
-              <tr key={b.id}>
-                <td>{b.ext_id}</td>
-                <td>
-                  {b.street} {b.house_nr}
-                </td>
-                <td>{b.postal_code}</td>
-                <td>{b.city}</td>
-                <td>{b.square_meters}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-outline-secondary me-2"
-                    onClick={() => handleEdit(b)}
-                    title="Bearbeiten"
-                  >
-                    <i className="bi bi-pencil-square"></i>
-                  </button>
-                  <button
-                    className="btn btn-sm btn-outline-danger"
-                    onClick={() => setConfirmDeleteId(b.id)}
-                    title="Löschen"
-                  >
-                    <i className="bi bi-trash3"></i>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
       {showModal && (
         <div className="modal show d-block" tabIndex="-1">
           <div className="modal-dialog modal-dialog-centered modal-sm modal-fullscreen-sm-down">
@@ -181,7 +183,7 @@ function BuildingDashboard() {
                 ></button>
               </div>
               <div className="modal-body">
-                {fields.map((field) => (
+                {fieldsModal.map((field) => (
                   <div className="mb-2" key={field.id}>
                     <label className="form-label">{field.text}</label>
                     <input
@@ -200,7 +202,10 @@ function BuildingDashboard() {
                 >
                   Abbrechen
                 </button>
-                <button className="btn btn-primary w-100" onClick={handleAdd}>
+                <button
+                  className="btn btn-primary w-100"
+                  onClick={handleSubmit}
+                >
                   {editingId ? "Aktualisieren" : "Hinzufügen"}
                 </button>
               </div>
@@ -237,6 +242,12 @@ function BuildingDashboard() {
           </div>
         </div>
       )}
+      <MasterDataTable
+        columns={columns}
+        data={buildings}
+        onEdit={openModal}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

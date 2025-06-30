@@ -17,7 +17,6 @@ function OverviewDashboard() {
       } else {
         setData(renterData);
       }
-      console.log(renterData);
     };
     fetchData();
   }, []);
