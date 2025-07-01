@@ -150,7 +150,7 @@ function BuildingDashboard() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h3>Gebäude</h3>
       <button
         className="btn btn-primary mb-3"

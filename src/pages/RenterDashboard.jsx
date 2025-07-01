@@ -134,8 +134,8 @@ function RenterDashboard() {
   };
 
   return (
-    <div className="container py-4">
-      <h2>Mieter</h2>
+    <div className="container mt-4">
+      <h3>Mieter</h3>
       <button
         onClick={() => {
           setFormData({ name: "", prename: "" });

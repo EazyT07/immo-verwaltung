@@ -66,7 +66,11 @@ function DashboardLayout() {
           </ul>
         </nav>
         <main className="flex-grow-1 p-4">
-          <Outlet />
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <Outlet />
+            </div>
+          </div>
         </main>
       </div>
     </div>

@@ -23,7 +23,7 @@ function OverviewDashboard() {
 
   return (
     <div className="container mt-4">
-      <h2>Übersicht Stammdaten</h2>
+      <h3>Übersicht Stammdaten</h3>
       {data.map((building) => (
         <div key={building.ext_id} className="mb-4">
           <h5>Gebäude: {building.ext_id}</h5>
