@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import MasterDataTable from "../components/MasterDataTable";
 
 function HousingUnitDashboard() {
   const [housingUnits, setHousingUnits] = useState([]);
@@ -9,25 +10,29 @@ function HousingUnitDashboard() {
     ext_id: "",
     square_meters: "",
     building_id: "",
-    building: {
-      ext_id: "",
-    },
   });
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
+  const columns = [
+    {
+      key: "id",
+      label: "ID",
+      render: (_value, row) => row.ext_id || "-",
+    },
+    {
+      key: "square_meters",
+      label: "Größe (m²)",
+    },
+    {
+      key: "building_id",
+      label: "Gebäude ID",
+      render: (_value, row) => row.building?.ext_id || "-",
+    },
+  ];
 
   useEffect(() => {
-    const fetchUserId = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      const { data: userRow } = await supabase
-        .from("user")
-        .select("id")
-        .eq("auth_user_id", user.id)
-        .single();
-      setUserId(userRow.id);
-    };
     fetchUserId();
   }, []);
 
@@ -36,14 +41,26 @@ function HousingUnitDashboard() {
     fetchBuildings();
   }, [userId]);
 
-  async function fetchHousingUnits() {
+  const fetchUserId = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const { data: userRow } = await supabase
+      .from("user")
+      .select("id")
+      .eq("auth_user_id", user.id)
+      .single();
+    setUserId(userRow.id);
+  };
+
+  const fetchHousingUnits = async () => {
     const { data, error } = await supabase
       .from("housing_unit")
       .select(
         "id, ext_id, square_meters, building_id, building:building_id(ext_id)"
       );
     if (!error) setHousingUnits(data);
-  }
+  };
 
   async function fetchBuildings() {
     const { data, error } = await supabase
@@ -57,26 +74,6 @@ function HousingUnitDashboard() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const openModal = (unit = null) => {
-    if (unit) {
-      setFormData({
-        id: unit.id,
-        ext_id: unit.ext_id,
-        square_meters: unit.square_meters,
-        building_id: unit.building_id,
-      });
-      setEditingId(unit.id);
-    } else {
-      setFormData({
-        ext_id: "",
-        square_meters: "",
-        building_id: "",
-      });
-      setEditingId(null);
-    }
-    setShowModal(true);
   };
 
   const handleSubmit = async () => {
@@ -94,6 +91,25 @@ function HousingUnitDashboard() {
     fetchHousingUnits();
   };
 
+  const openModal = (unit = null) => {
+    if (unit) {
+      setFormData({
+        ext_id: unit.ext_id,
+        square_meters: unit.square_meters,
+        building_id: unit.building_id,
+      });
+      setEditingId(unit.id);
+    } else {
+      setFormData({
+        ext_id: "",
+        square_meters: "",
+        building_id: "",
+      });
+      setEditingId(null);
+    }
+    setShowModal(true);
+  };
+
   const handleDelete = async (id) => {
     await supabase.from("housing_unit").delete().eq("id", id);
     fetchHousingUnits();
@@ -105,39 +121,6 @@ function HousingUnitDashboard() {
       <button className="btn btn-primary mb-3" onClick={() => openModal()}>
         + Neue Einheit
       </button>
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Größe (m²)</th>
-            <th>Gebäude</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody className="table-group-divider">
-          {housingUnits.map((unit) => (
-            <tr key={unit.id}>
-              <td>{unit.ext_id}</td>
-              <td>{unit.square_meters}</td>
-              <td>{unit.building?.ext_id}</td>
-              <td>
-                <button
-                  className="btn btn-sm btn-outline-secondary me-2"
-                  onClick={() => openModal(unit)}
-                >
-                  <i className="bi bi-pencil-square"></i>
-                </button>
-                <button
-                  className="btn btn-sm btn-outline-danger"
-                  onClick={() => handleDelete(unit.id)}
-                >
-                  <i className="bi bi-trash3"></i>
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
 
       {/* Modal */}
       {showModal && (
@@ -203,6 +186,13 @@ function HousingUnitDashboard() {
           </div>
         </div>
       )}
+
+      <MasterDataTable
+        columns={columns}
+        data={housingUnits}
+        onEdit={openModal}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }
