@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import * as AiIcons from "react-icons/ai";
+import { IoMdCloseCircleOutline } from "react-icons/io";
 
 function DashboardLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -13,67 +15,58 @@ function DashboardLayout() {
   };
 
   return (
-    <main className="container-fluid">
-      <div
-        style={{ minHeight: "100vh" }}
-        className="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary"
-      >
-        <div className="d-flex justify-content-between align-items-center p-2 border-bottom bg-light">
-          <div className="d-md-none">
-            <button
-              className="btn btn-outline-secondary"
-              onClick={() => setSidebarOpen(!isSidebarOpen)}
-            >
-              ☰ Menu
-            </button>
-          </div>
-          <div className="ms-auto">
-            <button className="btn btn-outline-danger" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-        </div>
-        <div className="d-flex flex-grow-1">
-          <nav
-            className={`sidebar bg-light p-3 ${
-              isSidebarOpen ? "d-block" : "d-none"
-            } d-md-block`}
-            style={{ width: "200px" }}
-          >
-            <h4>Menu</h4>
-            <ul className="nav nav-pills flex-column mb-auto">
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard/buildings">
-                  Gebäude
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard/housing-units">
-                  Wohnungseinheit
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard/renters">
-                  Mieter
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard/overview">
-                  Übersicht
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard/settings">
-                  Settings
-                </Link>
-              </li>
-            </ul>
-          </nav>
-
-          <Outlet />
-        </div>
+    <>
+      <div className="navbar">
+        <Link to="#" className="menu-bars">
+          <AiIcons.AiOutlineBars
+            onClick={() => setSidebarOpen(!isSidebarOpen)}
+          />
+        </Link>
       </div>
-    </main>
+      <nav className={`nav-menu ${isSidebarOpen ? "active" : ""}`}>
+        <ul
+          className="nav-menu-items"
+          onClick={() => setSidebarOpen(!isSidebarOpen)}
+        >
+          <li className="navbar-toggle">
+            <Link to="#" className="menu-bars">
+              <IoMdCloseCircleOutline />
+            </Link>
+          </li>
+          <li className="nav-text">
+            <Link to="/dashboard/buildings">
+              <IoMdCloseCircleOutline />
+              <span>Gebäude</span>
+            </Link>
+          </li>
+          <li className="nav-text">
+            <Link to="/dashboard/housing-units">
+              <IoMdCloseCircleOutline />
+              <span>Wohnungen</span>
+            </Link>
+          </li>
+          <li className="nav-text">
+            <Link to="/dashboard/renters">
+              <IoMdCloseCircleOutline />
+              <span>Mieter</span>
+            </Link>
+          </li>
+          <li className="nav-text">
+            <Link to="/dashboard/overview">
+              <IoMdCloseCircleOutline />
+              <span>Stammdaten</span>
+            </Link>
+          </li>
+          <li className="nav-text">
+            <Link to="/dashboard/settings">
+              <IoMdCloseCircleOutline />
+              <span>Einstellungen</span>
+            </Link>
+          </li>
+        </ul>
+      </nav>
+      <Outlet />
+    </>
   );
 }
 

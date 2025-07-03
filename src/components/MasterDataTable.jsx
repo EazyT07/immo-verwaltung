@@ -2,7 +2,7 @@ import React from "react";
 
 function MasterDataTable({ columns = [], data = [], onEdit, onDelete }) {
   return (
-    <div class="table-responsive">
+    <div className="table-responsive">
       <table className="table table-striped table-bordered table-hover">
         <thead>
           <tr>
