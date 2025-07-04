@@ -26,6 +26,9 @@ function DashboardLayout() {
             onClick={() => setSidebarOpen(!isSidebarOpen)}
           />
         </Link>
+        <div className="navbar-logout">
+          <GrLogout onClick={handleLogout} />
+        </div>
       </header>
       <nav className={`nav-menu ${isSidebarOpen ? "active" : ""}`}>
         <ul
