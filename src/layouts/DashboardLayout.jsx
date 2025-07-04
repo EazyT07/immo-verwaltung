@@ -16,13 +16,13 @@ function DashboardLayout() {
 
   return (
     <>
-      <div className="navbar">
+      <header className="navbar">
         <Link to="#" className="menu-bars">
           <AiIcons.AiOutlineBars
             onClick={() => setSidebarOpen(!isSidebarOpen)}
           />
         </Link>
-      </div>
+      </header>
       <nav className={`nav-menu ${isSidebarOpen ? "active" : ""}`}>
         <ul
           className="nav-menu-items"
@@ -65,7 +65,9 @@ function DashboardLayout() {
           </li>
         </ul>
       </nav>
-      <Outlet />
+      <main className="dashboard-content">
+        <Outlet />
+      </main>
     </>
   );
 }
