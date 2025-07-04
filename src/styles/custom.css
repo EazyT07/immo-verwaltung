@@ -117,6 +117,10 @@
     margin-left: 16px;
 }
 
+  .dashboard-content {
+    margin-top: 60px
+  }
+
 @media (min-width: 768px) {
   .nav-menu {
     left: 0; /* Sidebar always open on large screens */
