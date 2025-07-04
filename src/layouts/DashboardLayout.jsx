@@ -1,9 +1,13 @@
-// src/layouts/DashboardLayout.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import * as AiIcons from "react-icons/ai";
 import { IoMdCloseCircleOutline } from "react-icons/io";
+import { LuHouse } from "react-icons/lu";
+import { IoPersonOutline } from "react-icons/io5";
+import { HiOutlineDatabase } from "react-icons/hi";
+import { SlSettings } from "react-icons/sl";
+import { GrLogout } from "react-icons/gr";
 
 function DashboardLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -35,31 +39,31 @@ function DashboardLayout() {
           </li>
           <li className="nav-text">
             <Link to="/dashboard/buildings">
-              <IoMdCloseCircleOutline />
+              <LuHouse />
               <span>Gebäude</span>
             </Link>
           </li>
           <li className="nav-text">
             <Link to="/dashboard/housing-units">
-              <IoMdCloseCircleOutline />
+              <AiIcons.AiOutlineApartment />
               <span>Wohnungen</span>
             </Link>
           </li>
           <li className="nav-text">
             <Link to="/dashboard/renters">
-              <IoMdCloseCircleOutline />
+              <IoPersonOutline />
               <span>Mieter</span>
             </Link>
           </li>
           <li className="nav-text">
             <Link to="/dashboard/overview">
-              <IoMdCloseCircleOutline />
+              <HiOutlineDatabase />
               <span>Stammdaten</span>
             </Link>
           </li>
           <li className="nav-text">
             <Link to="/dashboard/settings">
-              <IoMdCloseCircleOutline />
+              <SlSettings />
               <span>Einstellungen</span>
             </Link>
           </li>
