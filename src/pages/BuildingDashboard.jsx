@@ -10,7 +10,6 @@ function BuildingDashboard() {
     house_nr: "",
     postal_code: "",
     city: "",
-    square_meters: "",
   });
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -22,7 +21,6 @@ function BuildingDashboard() {
     { id: "house_nr", text: "Hausnummer" },
     { id: "postal_code", text: "PLZ" },
     { id: "city", text: "Stadt" },
-    { id: "square_meters", text: "Größe (m²)" },
   ];
 
   const columns = [
@@ -45,10 +43,6 @@ function BuildingDashboard() {
     {
       key: "city",
       label: "Stadt",
-    },
-    {
-      key: "square_meters",
-      label: "Größe (m²)",
     },
   ];
 
@@ -81,7 +75,6 @@ function BuildingDashboard() {
     const newBuilding = {
       ...formData,
       user_id: userRow.id,
-      square_meters: parseFloat(formData.square_meters),
     };
 
     if (editingId) {
@@ -117,7 +110,6 @@ function BuildingDashboard() {
         house_nr: building.house_nr,
         postal_code: building.postal_code,
         city: building.city,
-        square_meters: building.square_meters,
       });
       setEditingId(building.id);
     } else {
@@ -127,7 +119,6 @@ function BuildingDashboard() {
         house_nr: "",
         postal_code: "",
         city: "",
-        square_meters: "",
       });
       setEditingId(null);
     }
@@ -160,7 +151,6 @@ function BuildingDashboard() {
             house_nr: "",
             postal_code: "",
             city: "",
-            square_meters: "",
           });
           setEditingId(null);
           setShowModal(true);

@@ -10,6 +10,7 @@
   --sidebar-bg: #343a40;
 }
 
+/* Header, Sidebar */
 .navbar {
     background-color: var(--sidebar-bg);
     height: 60px;

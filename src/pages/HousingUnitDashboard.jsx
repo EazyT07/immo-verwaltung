@@ -58,7 +58,8 @@ function HousingUnitDashboard() {
       .from("housing_unit")
       .select(
         "id, ext_id, square_meters, building_id, building:building_id(ext_id)"
-      );
+      )
+      .order("ext_id", { ascending: true });
     if (!error) setHousingUnits(data);
   };
 

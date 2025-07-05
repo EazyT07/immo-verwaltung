@@ -11,6 +11,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import RenterDashboard from "./pages/RenterDashboard";
 import BuildingDashboard from "./pages/BuildingDashboard";
 import HousingUnitDashboard from "./pages/HousingUnitDashboard";
+import ExtraCostDashboard from "./pages/ExtraCostDashboard";
 import OverviewDashboard from "./pages/OverviewDashboard";
 import SettingDashboard from "./pages/SettingDashboard";
 
@@ -26,6 +27,7 @@ function App() {
           <Route path="housing-units" element={<HousingUnitDashboard />} />
           <Route path="renters" element={<RenterDashboard />} />
           <Route path="overview" element={<OverviewDashboard />} />
+          <Route path="extra-costs" element={<ExtraCostDashboard />} />
           <Route path="settings" element={<SettingDashboard />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" />} />

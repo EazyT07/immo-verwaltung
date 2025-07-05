@@ -8,6 +8,8 @@ function RenterDashboard() {
   const [formData, setFormData] = useState({
     name: "",
     prename: "",
+    date_from: "",
+    date_to: "",
     housing_unit_id: "",
   });
   const [editingId, setEditingId] = useState(null);
@@ -22,6 +24,14 @@ function RenterDashboard() {
     {
       key: "prename",
       label: "Vorname",
+    },
+    {
+      key: "date_from",
+      label: "Datum von",
+    },
+    {
+      key: "date_to",
+      label: "Datum bis",
     },
     {
       key: "housing_unit_id",
@@ -39,7 +49,7 @@ function RenterDashboard() {
     const { data, error } = await supabase
       .from("renter")
       .select(
-        "id, name, prename, housing_unit_id, housing_unit:housing_unit_id(ext_id)"
+        "id, name, prename, date_from, date_to, housing_unit_id, housing_unit:housing_unit_id(ext_id)"
       );
     if (!error) {
       setRenters(data);
@@ -102,6 +112,8 @@ function RenterDashboard() {
       setFormData({
         name: renter.name,
         prename: renter.prename,
+        date_from: renter.date_from,
+        date_to: renter.date_to,
         housing_unit_id: renter.housing_unit_id,
       });
       setEditingId(renter.id);
@@ -176,6 +188,21 @@ function RenterDashboard() {
                   onChange={handleChange}
                   className="form-control mb-2"
                 />
+                <label className="form-label">Datum von</label>
+                <input
+                  name="date_from"
+                  value={formData.date_from}
+                  onChange={handleChange}
+                  className="form-control mb-2"
+                />
+                <label className="form-label">Datum von</label>
+                <input
+                  name="date_to"
+                  value={formData.date_to}
+                  onChange={handleChange}
+                  className="form-control mb-2"
+                />
+
                 <label className="form-label">Wohnung</label>
                 <select
                   name="housing_unit_id"

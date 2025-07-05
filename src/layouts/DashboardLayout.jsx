@@ -65,6 +65,12 @@ function DashboardLayout() {
             </Link>
           </li>
           <li className="nav-text">
+            <Link to="/dashboard/extra-costs">
+              <HiOutlineDatabase />
+              <span>Nebenkosten</span>
+            </Link>
+          </li>
+          <li className="nav-text">
             <Link to="/dashboard/settings">
               <SlSettings />
               <span>Einstellungen</span>
