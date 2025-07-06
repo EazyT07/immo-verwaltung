@@ -19,7 +19,6 @@ function OverviewDashboard() {
     } else {
       setData(renterData);
     }
-    console.log("Übericht", renterData);
   };
 
   return (
@@ -43,22 +42,24 @@ function OverviewDashboard() {
               </tr>
             </thead>
             <tbody>
-              {building.housing_unit?.map((unit) => (
-                <tr key={unit.ext_id}>
-                  <td>{unit.ext_id}</td>
-                  <td>{unit.square_meters}</td>
-                  {unit.renter ? (
-                    unit.renter.map((singleRenter) => (
-                      <>
-                        <td>{singleRenter.prename}</td>
-                        <td>{singleRenter.name}</td>
-                      </>
-                    ))
-                  ) : (
+              {building.housing_unit?.map((unit) =>
+                unit.renter && unit.renter.length > 0 ? (
+                  unit.renter.map((singleRenter, idx) => (
+                    <tr key={`${unit.ext_id}-${singleRenter.name}-${idx}`}>
+                      <td>{unit.ext_id}</td>
+                      <td>{unit.square_meters}</td>
+                      <td>{singleRenter.prename}</td>
+                      <td>{singleRenter.name}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr key={`${unit.ext_id}-no-renter`}>
+                    <td>{unit.ext_id}</td>
+                    <td>{unit.square_meters}</td>
                     <td colSpan="2">—</td>
-                  )}
-                </tr>
-              ))}
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         </div>

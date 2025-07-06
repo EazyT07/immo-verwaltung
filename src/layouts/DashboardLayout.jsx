@@ -61,7 +61,7 @@ function DashboardLayout() {
           <li className="nav-text">
             <Link to="/dashboard/overview">
               <HiOutlineDatabase />
-              <span>Stammdaten</span>
+              <span>Übersicht</span>
             </Link>
           </li>
           <li className="nav-text">
