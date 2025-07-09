@@ -185,17 +185,14 @@ function BuildingDashboard() {
                   </div>
                 ))}
               </div>
-              <div className="modal-footer d-flex flex-column gap-2">
+              <div className="modal-footer">
                 <button
-                  className="btn btn-secondary w-100"
+                  className="btn btn-secondary"
                   onClick={() => setShowModal(false)}
                 >
                   Abbrechen
                 </button>
-                <button
-                  className="btn btn-primary w-100"
-                  onClick={handleSubmit}
-                >
+                <button className="btn btn-primary" onClick={handleSubmit}>
                   {editingId ? "Aktualisieren" : "Hinzufügen"}
                 </button>
               </div>
@@ -214,17 +211,14 @@ function BuildingDashboard() {
               <div className="modal-body">
                 <p>Möchten Sie dieses Gebäude wirklich löschen?</p>
               </div>
-              <div className="modal-footer d-flex flex-column gap-2">
+              <div className="modal-footer">
                 <button
-                  className="btn btn-secondary w-100"
+                  className="btn btn-secondary"
                   onClick={() => setConfirmDeleteId(null)}
                 >
                   Abbrechen
                 </button>
-                <button
-                  className="btn btn-danger w-100"
-                  onClick={confirmDelete}
-                >
+                <button className="btn btn-danger" onClick={confirmDelete}>
                   Löschen
                 </button>
               </div>
