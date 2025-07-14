@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import MasterDataTable from "../components/MasterDataTable";
+import ModalForm from "../components/ModalForm";
 
 function RenterDashboard() {
   const [renters, setRenters] = useState([]);
@@ -15,6 +16,19 @@ function RenterDashboard() {
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
+  const fieldsModal = [
+    { id: "name", text: "Name", type: "text" },
+    { id: "prename", text: "Vorname", type: "text" },
+    { id: "date_from", text: "Datum von", type: "text" },
+    { id: "date_to", text: "Datum bis", type: "text" },
+    {
+      id: "housing_unit_id",
+      text: "Wohnnung ID",
+      type: "select",
+      options: housing_units,
+    },
+  ];
 
   const columns = [
     {
@@ -160,78 +174,15 @@ function RenterDashboard() {
       </button>
 
       {showModal && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog modal-dialog-centered modal-sm modal-fullscreen-sm-down">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {editingId ? "Mieter bearbeiten" : "Neuer Mieter"}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <label className="form-label">Name</label>
-                <input
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-                <label className="form-label">Vorname</label>
-                <input
-                  name="prename"
-                  value={formData.prename}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-                <label className="form-label">Datum von</label>
-                <input
-                  name="date_from"
-                  value={formData.date_from}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-                <label className="form-label">Datum von</label>
-                <input
-                  name="date_to"
-                  value={formData.date_to}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-
-                <label className="form-label">Wohnung</label>
-                <select
-                  name="housing_unit_id"
-                  value={formData.housing_unit_id}
-                  onChange={handleChange}
-                  className="form-select mb-2"
-                >
-                  <option value="">-- bitte wählen --</option>
-                  {housing_units.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.ext_id || b.id}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Abbrechen
-                </button>
-                <button className="btn btn-primary" onClick={handleSubmit}>
-                  Speichern
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModalForm
+          fields={fieldsModal}
+          formData={formData}
+          onChange={handleChange}
+          onClose={() => setShowModal(false)}
+          onSubmit={handleSubmit}
+          isEditing={!!editingId}
+          title={editingId ? "Mieter bearbeiten" : "Neuen Mieter hinzufügen"}
+        />
       )}
 
       {confirmDeleteId && (

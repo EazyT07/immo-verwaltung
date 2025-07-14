@@ -37,7 +37,7 @@ function ModalForm({
                   <input
                     name={field.id}
                     className="form-control"
-                    value={formData[field.id]}
+                    value={formData[field.id] ?? ""}
                     onChange={onChange}
                   />
                 )}

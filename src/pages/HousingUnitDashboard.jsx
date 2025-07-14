@@ -145,7 +145,7 @@ function HousingUnitDashboard() {
           onClose={() => setShowModal(false)}
           onSubmit={handleSubmit}
           isEditing={!!editingId}
-          title={editingId ? "Gebäude bearbeiten" : "Neues Gebäude hinzufügen"}
+          title={editingId ? "Wohnung bearbeiten" : "Neue Wohnung hinzufügen"}
         />
       )}
 
