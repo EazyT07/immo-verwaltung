@@ -196,6 +196,7 @@ nav {
     padding: var(--spacing4);
     gap: var(--spacing4);
     border-radius: var(--spacing2);
+    z-index: 9999;
   }
 }
 .logo {

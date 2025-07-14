@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import MasterDataTable from "../components/MasterDataTable";
+import ModalForm from "../components/ModalForm";
 
 function BuildingDashboard() {
   const [buildings, setBuildings] = useState([]);
@@ -160,45 +161,15 @@ function BuildingDashboard() {
       </button>
 
       {showModal && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog modal-dialog-centered modal-sm modal-fullscreen-sm-down">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {editingId ? "Gebäude bearbeiten" : "Neues Gebäude"}
-                </h5>
-                <button
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                {fieldsModal.map((field) => (
-                  <div className="mb-2" key={field.id}>
-                    <label className="form-label">{field.text}</label>
-                    <input
-                      name={field.id}
-                      className="form-control"
-                      value={formData[field.id]}
-                      onChange={handleChange}
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Abbrechen
-                </button>
-                <button className="btn btn-primary" onClick={handleSubmit}>
-                  {editingId ? "Aktualisieren" : "Hinzufügen"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModalForm
+          fields={fieldsModal}
+          formData={formData}
+          onChange={handleChange}
+          onClose={() => setShowModal(false)}
+          onSubmit={handleSubmit}
+          isEditing={!!editingId}
+          title={editingId ? "Gebäude bearbeiten" : "Neues Gebäude hinzufügen"}
+        />
       )}
 
       {confirmDeleteId && (
