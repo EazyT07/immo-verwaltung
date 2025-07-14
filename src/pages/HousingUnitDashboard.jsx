@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import MasterDataTable from "../components/MasterDataTable";
+import ModalForm from "../components/ModalForm";
 
 function HousingUnitDashboard() {
   const [housingUnits, setHousingUnits] = useState([]);
@@ -14,6 +15,17 @@ function HousingUnitDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
+  const fieldsModal = [
+    { id: "ext_id", text: "ID", type: "text" },
+    { id: "square_meters", text: "Größe (m²)", type: "text" },
+    {
+      id: "building_id",
+      text: "Gebäude ID",
+      type: "select",
+      options: buildings,
+    },
+  ];
 
   const columns = [
     {
@@ -73,6 +85,7 @@ function HousingUnitDashboard() {
   }
 
   const handleChange = (e) => {
+    console.log(e.target);
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -125,67 +138,15 @@ function HousingUnitDashboard() {
 
       {/* Modal */}
       {showModal && (
-        <div
-          className="modal d-block"
-          tabIndex="-1"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-        >
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {editingId ? "Einheit bearbeiten" : "Neue Einheit"}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <label className="form-label">ID</label>
-                <input
-                  name="ext_id"
-                  value={formData.ext_id}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-                <label className="form-label">Größe (m²)</label>
-                <input
-                  name="square_meters"
-                  value={formData.square_meters}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-                <label className="form-label">Gebäude</label>
-                <select
-                  name="building_id"
-                  value={formData.building_id}
-                  onChange={handleChange}
-                  className="form-select mb-2"
-                >
-                  <option value="">-- bitte wählen --</option>
-                  {buildings.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.ext_id || b.id}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Abbrechen
-                </button>
-                <button className="btn btn-primary" onClick={handleSubmit}>
-                  Speichern
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModalForm
+          fields={fieldsModal}
+          formData={formData}
+          onChange={handleChange}
+          onClose={() => setShowModal(false)}
+          onSubmit={handleSubmit}
+          isEditing={!!editingId}
+          title={editingId ? "Gebäude bearbeiten" : "Neues Gebäude hinzufügen"}
+        />
       )}
 
       <MasterDataTable

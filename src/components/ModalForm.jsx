@@ -16,15 +16,31 @@ function ModalForm({
             <button className="btn-close" onClick={onClose}></button>
           </div>
           <div className="modal-body">
-            {fields.map((field) => (
-              <div className="mb-2" key={field.id}>
+            {fields.map((field, index) => (
+              <div className="mb-2" key={`field-${field.id || index}`}>
                 <label className="form-label">{field.text}</label>
-                <input
-                  name={field.id}
-                  className="form-control"
-                  value={formData[field.id]}
-                  onChange={onChange}
-                />
+                {field.type === "select" ? (
+                  <select
+                    name={field.id}
+                    className="form-control"
+                    value={formData[field.id] || ""}
+                    onChange={onChange}
+                  >
+                    <option value="">Bitte wählen</option>
+                    {field.options?.map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.ext_id || opt.name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    name={field.id}
+                    className="form-control"
+                    value={formData[field.id]}
+                    onChange={onChange}
+                  />
+                )}
               </div>
             ))}
           </div>

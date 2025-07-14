@@ -17,11 +17,11 @@ function BuildingDashboard() {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const fieldsModal = [
-    { id: "ext_id", text: "ID" },
-    { id: "street", text: "Strasse" },
-    { id: "house_nr", text: "Hausnummer" },
-    { id: "postal_code", text: "PLZ" },
-    { id: "city", text: "Stadt" },
+    { id: "ext_id", text: "ID", type: "text" },
+    { id: "street", text: "Strasse", type: "text" },
+    { id: "house_nr", text: "Hausnummer", type: "text" },
+    { id: "postal_code", text: "PLZ", type: "text" },
+    { id: "city", text: "Stadt", type: "text" },
   ];
 
   const columns = [
