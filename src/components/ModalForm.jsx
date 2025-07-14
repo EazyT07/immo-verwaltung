@@ -18,9 +18,15 @@ function ModalForm({
           <div className="modal-body">
             {fields.map((field, index) => (
               <div className="mb-2" key={`field-${field.id || index}`}>
-                <label className="form-label">{field.text}</label>
+                <label
+                  className="form-label"
+                  htmlFor={`field-${field.id || index}`}
+                >
+                  {field.text}
+                </label>
                 {field.type === "select" ? (
                   <select
+                    id={`field-${field.id || index}`}
                     name={field.id}
                     className="form-control"
                     value={formData[field.id] || ""}
@@ -35,6 +41,7 @@ function ModalForm({
                   </select>
                 ) : (
                   <input
+                    id={`field-${field.id || index}`}
                     name={field.id}
                     className="form-control"
                     value={formData[field.id] ?? ""}
