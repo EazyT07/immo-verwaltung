@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import MasterDataTable from "../components/MasterDataTable";
+import ModalForm from "../components/ModalForm";
 
 function ExtraCostDashboard() {
   const [extraCosts, setExtraCosts] = useState([]);
@@ -15,6 +16,18 @@ function ExtraCostDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
+  const fieldsModal = [
+    {
+      id: "building_id",
+      text: "Gebäude ID",
+      type: "select",
+      options: buildings,
+    },
+    { id: "year", text: "Jahr", type: "text" },
+    { id: "cost_element", text: "Kostenart", type: "text" },
+    { id: "cost", text: "Kosten", type: "text" },
+  ];
 
   const columns = [
     {
@@ -131,73 +144,15 @@ function ExtraCostDashboard() {
 
       {/* Modal */}
       {showModal && (
-        <div
-          className="modal d-block"
-          tabIndex="-1"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-        >
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {editingId ? "Einheit bearbeiten" : "Neue Einheit"}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <select
-                  name="building_id"
-                  value={formData.building_id}
-                  onChange={handleChange}
-                  className="form-select mb-2"
-                >
-                  <option value="">-- bitte wählen --</option>
-                  {buildings.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.ext_id || b.id}
-                    </option>
-                  ))}
-                </select>
-                <label className="form-label">Jahr</label>
-                <input
-                  name="year"
-                  value={formData.year}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-                <label className="form-label">Kostenart</label>
-                <input
-                  name="cost_element"
-                  value={formData.cost_element}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-                <label className="form-label">Betrag in €</label>
-                <input
-                  name="cost"
-                  value={formData.cost}
-                  onChange={handleChange}
-                  className="form-control mb-2"
-                />
-              </div>
-              <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Abbrechen
-                </button>
-                <button className="btn btn-primary" onClick={handleSubmit}>
-                  Speichern
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModalForm
+          fields={fieldsModal}
+          formData={formData}
+          onChange={handleChange}
+          onClose={() => setShowModal(false)}
+          onSubmit={handleSubmit}
+          isEditing={!!editingId}
+          title={editingId ? "Kosten bearbeiten" : "Neue Kosten hinzufügen"}
+        />
       )}
       <MasterDataTable
         columns={columns}
