@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import MasterDataTable from "../components/MasterDataTable";
 import ModalForm from "../components/ModalForm";
+import ModalDelete from "../components/ModalDelete";
 
 function RenterDashboard() {
   const [renters, setRenters] = useState([]);
@@ -186,32 +187,10 @@ function RenterDashboard() {
       )}
 
       {confirmDeleteId && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog modal-dialog-centered modal-sm modal-fullscreen-sm-down">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Löschen bestätigen</h5>
-              </div>
-              <div className="modal-body">
-                <p>Möchten Sie diesen Mieter wirklich löschen?</p>
-              </div>
-              <div className="modal-footer d-flex flex-column gap-2">
-                <button
-                  className="btn btn-secondary w-100"
-                  onClick={() => setConfirmDeleteId(null)}
-                >
-                  Abbrechen
-                </button>
-                <button
-                  className="btn btn-danger w-100"
-                  onClick={confirmDelete}
-                >
-                  Löschen
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModalDelete
+          onCancel={() => setConfirmDeleteId(null)}
+          onConfirm={confirmDelete}
+        />
       )}
 
       <MasterDataTable

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import MasterDataTable from "../components/MasterDataTable";
 import ModalForm from "../components/ModalForm";
+import ModalDelete from "../components/ModalDelete";
 
 function HousingUnitDashboard() {
   const [housingUnits, setHousingUnits] = useState([]);
@@ -123,9 +124,19 @@ function HousingUnitDashboard() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
-    await supabase.from("housing_unit").delete().eq("id", id);
-    fetchHousingUnits();
+  const handleDelete = (id) => {
+    setConfirmDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    const { error } = await supabase
+      .from("housing_unit")
+      .delete()
+      .eq("id", confirmDeleteId);
+    if (!error) {
+      setHousingUnits((prev) => prev.filter((h) => h.id !== confirmDeleteId));
+    }
+    setConfirmDeleteId(null);
   };
 
   return (
@@ -145,6 +156,13 @@ function HousingUnitDashboard() {
           onSubmit={handleSubmit}
           isEditing={!!editingId}
           title={editingId ? "Wohnung bearbeiten" : "Neue Wohnung hinzufügen"}
+        />
+      )}
+
+      {confirmDeleteId && (
+        <ModalDelete
+          onCancel={() => setConfirmDeleteId(null)}
+          onConfirm={confirmDelete}
         />
       )}
 

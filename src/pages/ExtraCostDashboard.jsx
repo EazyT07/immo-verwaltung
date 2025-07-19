@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import MasterDataTable from "../components/MasterDataTable";
 import ModalForm from "../components/ModalForm";
+import ModalDelete from "../components/ModalDelete";
 
 function ExtraCostDashboard() {
   const [extraCosts, setExtraCosts] = useState([]);
@@ -130,9 +131,19 @@ function ExtraCostDashboard() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
-    await supabase.from("extra_cost").delete().eq("id", id);
-    fetchExtraCosts();
+  const handleDelete = (id) => {
+    setConfirmDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    const { error } = await supabase
+      .from("extra_cost")
+      .delete()
+      .eq("id", confirmDeleteId);
+    if (!error) {
+      setExtraCosts((prev) => prev.filter((e) => e.id !== confirmDeleteId));
+    }
+    setConfirmDeleteId(null);
   };
 
   return (
@@ -154,6 +165,14 @@ function ExtraCostDashboard() {
           title={editingId ? "Kosten bearbeiten" : "Neue Kosten hinzufügen"}
         />
       )}
+
+      {confirmDeleteId && (
+        <ModalDelete
+          onCancel={() => setConfirmDeleteId(null)}
+          onConfirm={confirmDelete}
+        />
+      )}
+
       <MasterDataTable
         columns={columns}
         data={extraCosts}
