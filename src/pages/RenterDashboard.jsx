@@ -10,9 +10,10 @@ function RenterDashboard() {
   const [formData, setFormData] = useState({
     name: "",
     prename: "",
-    date_from: "",
-    date_to: "",
     housing_unit_id: "",
+    year: "",
+    months: "",
+    persons: "",
   });
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -21,14 +22,15 @@ function RenterDashboard() {
   const fieldsModal = [
     { id: "name", text: "Name", type: "text" },
     { id: "prename", text: "Vorname", type: "text" },
-    { id: "date_from", text: "Datum von", type: "text" },
-    { id: "date_to", text: "Datum bis", type: "text" },
     {
       id: "housing_unit_id",
       text: "Wohnnung ID",
       type: "select",
       options: housing_units,
     },
+    { id: "year", text: "Jahr", type: "text" },
+    { id: "months", text: "Monate", type: "text" },
+    { id: "persons", text: "Personen", type: "text" },
   ];
 
   const columns = [
@@ -41,17 +43,21 @@ function RenterDashboard() {
       label: "Vorname",
     },
     {
-      key: "date_from",
-      label: "Datum von",
-    },
-    {
-      key: "date_to",
-      label: "Datum bis",
-    },
-    {
       key: "housing_unit_id",
       label: "Wohnung ID",
       render: (_value, row) => row.housing_unit?.ext_id || "-",
+    },
+    {
+      key: "year",
+      label: "Jahr",
+    },
+    {
+      key: "months",
+      label: "Monate",
+    },
+    {
+      key: "persons",
+      label: "Personen",
     },
   ];
 
@@ -64,7 +70,7 @@ function RenterDashboard() {
     const { data, error } = await supabase
       .from("renter")
       .select(
-        "id, name, prename, date_from, date_to, housing_unit_id, housing_unit:housing_unit_id(ext_id)"
+        "id, name, prename, housing_unit_id, housing_unit:housing_unit_id(ext_id), year, months, persons"
       );
     if (!error) {
       setRenters(data);
@@ -127,9 +133,10 @@ function RenterDashboard() {
       setFormData({
         name: renter.name,
         prename: renter.prename,
-        date_from: renter.date_from,
-        date_to: renter.date_to,
         housing_unit_id: renter.housing_unit_id,
+        year: renter.year,
+        months: renter.months,
+        persons: renter.persons,
       });
       setEditingId(renter.id);
     } else {
@@ -137,6 +144,9 @@ function RenterDashboard() {
         name: "",
         prename: "",
         housing_unit_id: "",
+        year: "",
+        months: "",
+        persons: "",
       });
       setEditingId(null);
     }

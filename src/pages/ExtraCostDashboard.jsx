@@ -12,6 +12,7 @@ function ExtraCostDashboard() {
     building_id: "",
     year: "",
     cost_element: "",
+    dist_key: "",
     cost: "",
   });
   const [showModal, setShowModal] = useState(false);
@@ -27,6 +28,15 @@ function ExtraCostDashboard() {
     },
     { id: "year", text: "Jahr", type: "text" },
     { id: "cost_element", text: "Kostenart", type: "text" },
+    {
+      id: "dist_key",
+      text: "Verteilung",
+      type: "select",
+      options: [
+        { id: "QM", name: "Quadratmeter" },
+        { id: "AP", name: "Anzahl Personen" },
+      ],
+    },
     { id: "cost", text: "Kosten", type: "text" },
   ];
 
@@ -43,6 +53,10 @@ function ExtraCostDashboard() {
     {
       key: "cost_element",
       label: "Kostenart",
+    },
+    {
+      key: "dist_key",
+      label: "Verteilung",
     },
     {
       key: "cost",
@@ -75,7 +89,7 @@ function ExtraCostDashboard() {
     const { data, error } = await supabase
       .from("extra_cost")
       .select(
-        "id, building_id, building:building_id(ext_id), year, cost_element, cost"
+        "id, building_id, building:building_id(ext_id), year, cost_element, dist_key, cost"
       )
       .order("building_id", { ascending: true });
     if (!error) setExtraCosts(data);
@@ -116,6 +130,7 @@ function ExtraCostDashboard() {
         building_id: extra_cost.building_id,
         year: extra_cost.year,
         cost_element: extra_cost.cost_element,
+        dist_key: extra_cost.dist_key,
         cost: extra_cost.cost,
       });
       setEditingId(extra_cost.id);
@@ -124,6 +139,7 @@ function ExtraCostDashboard() {
         building_id: "",
         year: "",
         cost_element: "",
+        dist_key: "",
         cost: "",
       });
       setEditingId(null);
