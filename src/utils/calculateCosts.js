@@ -4,40 +4,35 @@ export default async function calculateCosts(userId, supabase) {
     .from("extra_cost")
     .select("*")
     .eq("user_id", userId);
-  const { data: housingUnits } = await supabase
-    .from("housing_unit")
-    .select("id, square_meters, building_id");
-  const { data: renters } = await supabase
+  const { data: rentersData } = await supabase
     .from("renter")
-    .select("id, housing_unit_id");
+    .select(
+      "id, housing_unit_id, housing_unit:housing_unit_id(square_meters), year, months, persons"
+    );
 
   const results = [];
 
-  for (const cost of extraCosts) {
-    const unitsInBuilding = housingUnits.filter(
-      (hu) => hu.building_id === cost.building_id
-    );
-    const totalSquareMeters = unitsInBuilding.reduce(
-      (sum, hu) => sum + hu.square_meters,
+  // Process all renters
+  for (const renterData of rentersData) {
+    // Calculate Total
+    const total = rentersData.reduce(
+      (sum, row) => sum + row.housing_unit.square_meters * row.months,
       0
     );
+    if (total === 0) continue;
+    const factor =
+      (renterData.housing_unit.square_meters * renterData.months) / total;
 
-    for (const hu of unitsInBuilding) {
-      const unitRenters = renters.filter((r) => r.housing_unit_id === hu.id);
-      const factor = hu.square_meters / totalSquareMeters;
-      const amount = factor * cost.cost;
-
-      for (const renter of unitRenters) {
-        results.push({
-          user_id: userId,
-          building_id: cost.building_id,
-          housing_unit_id: hu.id,
-          renter_id: renter.id,
-          extra_cost_id: cost.id,
-          factor,
-          amount,
-        });
-      }
+    for (const costNew of extraCosts) {
+      results.push({
+        user_id: userId,
+        building_id: costNew.building_id,
+        housing_unit_id: renterData.housing_unit_id,
+        renter_id: renterData.id,
+        extra_cost_id: costNew.id,
+        factor: parseFloat(factor).toFixed(4),
+        amount: parseFloat(costNew.cost * factor).toFixed(2),
+      });
     }
   }
 

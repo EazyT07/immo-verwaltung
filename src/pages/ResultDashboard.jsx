@@ -75,7 +75,6 @@ function ResultDashboard() {
       .select(select)
       .order("building_id", { ascending: true });
     if (!error) setCostResult(data);
-    console.log(data);
   };
 
   const openModal = () => {};
