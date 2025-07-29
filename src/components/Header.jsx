@@ -43,6 +43,10 @@ function Header() {
           <HiOutlineDatabase />
           <span>Nebenkosten</span>
         </Link>
+        <Link to="/dashboard/result">
+          <HiOutlineDatabase />
+          <span>Abrechnung</span>
+        </Link>
         <button onClick={handleLogout}>Log out</button>
       </nav>
     </header>

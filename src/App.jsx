@@ -14,6 +14,7 @@ import HousingUnitDashboard from "./pages/HousingUnitDashboard";
 import ExtraCostDashboard from "./pages/ExtraCostDashboard";
 import OverviewDashboard from "./pages/OverviewDashboard";
 import SettingDashboard from "./pages/SettingDashboard";
+import ResultDashboard from "./pages/ResultDashboard";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="renters" element={<RenterDashboard />} />
           <Route path="overview" element={<OverviewDashboard />} />
           <Route path="extra-costs" element={<ExtraCostDashboard />} />
+          <Route path="result" element={<ResultDashboard />} />
           <Route path="settings" element={<SettingDashboard />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" />} />

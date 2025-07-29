@@ -1,17 +1,7 @@
-import { useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
-import * as AiIcons from "react-icons/ai";
+import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 
 function DashboardLayout() {
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
-
   return (
     <>
       <Header />
